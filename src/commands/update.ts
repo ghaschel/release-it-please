@@ -4,11 +4,27 @@ import fs from "fs-extra";
 import ora from "ora";
 import path from "path";
 
+import type { PackageManager } from "../types";
 import {
+  detectPackageManager,
   detectPrettierMethod,
   findExistingEslintConfig,
   getTemplateEslintConfigName,
 } from "./utils/checker";
+
+/**
+ * Get the package manager execution command
+ */
+function getPackageManagerExec(packageManager: PackageManager): string {
+  switch (packageManager) {
+    case "npm":
+      return "npx --no --";
+    case "yarn":
+      return "yarn dlx --";
+    case "pnpm":
+      return "pnpm dlx --";
+  }
+}
 
 export const updateCommand = new Command("update")
   .description("Update template files (scripts, configs) to the latest version")
@@ -22,8 +38,10 @@ export const updateCommand = new Command("update")
     const copySpinner = ora("Updating template files...").start();
 
     try {
-      // Detect current prettier method
+      // Detect current package manager and prettier method
+      const packageManager = await detectPackageManager();
       const prettierMethod = await detectPrettierMethod();
+      const pmExec = getPackageManagerExec(packageManager);
 
       // Copy base template files (commitlint, versionrc)
       await fs.copy(
@@ -90,14 +108,14 @@ export const updateCommand = new Command("update")
 
         // Update commit-msg hook
         const commitMsgPath = path.join(huskyDir, "commit-msg");
-        const commitMsgContent = "npx --no -- commitlint --edit $1\n";
+        const commitMsgContent = `${pmExec} commitlint --edit $1\n`;
         await fs.writeFile(commitMsgPath, commitMsgContent);
         await fs.chmod(commitMsgPath, 0o755);
 
         // Update pre-commit hook (if lint-staged is used)
         if (prettierMethod) {
           const preCommitPath = path.join(huskyDir, "pre-commit");
-          const preCommitContent = "# Pre-commit hook\nnpx lint-staged\n";
+          const preCommitContent = `# Pre-commit hook\n${pmExec} lint-staged\n`;
           await fs.writeFile(preCommitPath, preCommitContent);
           await fs.chmod(preCommitPath, 0o755);
         }

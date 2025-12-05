@@ -4,10 +4,25 @@ import fs from "fs-extra";
 import ora from "ora";
 import path from "path";
 
-import type { PackageJson } from "../../types";
+import type { PackageJson, PackageManager } from "../../types";
+
+/**
+ * Get the package manager execution command
+ */
+function getPackageManagerExec(packageManager: PackageManager): string {
+  switch (packageManager) {
+    case "npm":
+      return "npx --no --";
+    case "yarn":
+      return "yarn dlx --";
+    case "pnpm":
+      return "pnpm dlx --";
+  }
+}
 
 export async function setupHusky(
   useLintStaged: boolean,
+  packageManager: PackageManager,
   force: boolean
 ): Promise<void> {
   const huskyDir = path.resolve(".husky");
@@ -31,12 +46,15 @@ export async function setupHusky(
   try {
     await execa("npx", ["husky", "init"], { stdio: "inherit" });
 
+    // Get package manager exec command
+    const pmExec = getPackageManagerExec(packageManager);
+
     // Update pre-commit hook
     const preCommitPath = path.join(huskyDir, "pre-commit");
     let preCommitContent = "# Pre-commit hook\n";
 
     if (useLintStaged) {
-      preCommitContent += "npx lint-staged\n";
+      preCommitContent += `${pmExec} lint-staged\n`;
     }
 
     await fs.writeFile(preCommitPath, preCommitContent);
@@ -44,7 +62,7 @@ export async function setupHusky(
 
     // Create commit-msg hook for commitlint
     const commitMsgPath = path.join(huskyDir, "commit-msg");
-    const commitMsgContent = "npx --no -- commitlint --edit $1\n";
+    const commitMsgContent = `${pmExec} commitlint --edit $1\n`;
 
     await fs.writeFile(commitMsgPath, commitMsgContent);
     await fs.chmod(commitMsgPath, 0o755); // Make executable

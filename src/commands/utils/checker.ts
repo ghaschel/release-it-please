@@ -2,7 +2,7 @@ import { execa } from "execa";
 import fs from "fs-extra";
 import path from "path";
 
-import type { PackageJson } from "../../types";
+import type { PackageJson, PackageManager } from "../../types";
 
 export async function isGloballyInstalled(
   packageName: string
@@ -38,6 +38,23 @@ export function getMissingDependencies(
 
 export async function pathExists(filePath: string): Promise<boolean> {
   return await fs.pathExists(path.resolve(filePath));
+}
+
+/**
+ * Detect the package manager based on lock files
+ */
+export async function detectPackageManager(): Promise<PackageManager> {
+  if (await pathExists("pnpm-lock.yaml")) {
+    return "pnpm";
+  }
+  if (await pathExists("yarn.lock")) {
+    return "yarn";
+  }
+  if (await pathExists("package-lock.json")) {
+    return "npm";
+  }
+  // Default to npm if no lock file is found
+  return "npm";
 }
 
 export async function areTemplateFilesInstalled(): Promise<boolean> {

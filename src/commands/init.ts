@@ -107,13 +107,7 @@ async function runInit(options: InitOptions): Promise<void> {
     config.force
   );
 
-  // Setup Husky
-  await setupHusky(config.useLintStaged, config.force);
-
-  // Setup Commitizen
-  await setupCommitizen(pkgJson, config.force);
-
-  // Copy template files
+  // Copy template files FIRST (before Husky setup, so scripts exist)
   await copyTemplateFiles(
     config.useSplitChangelog,
     config.useLintStaged,
@@ -132,6 +126,12 @@ async function runInit(options: InitOptions): Promise<void> {
 
   // Update package.json scripts
   await updatePackageJsonScripts(config.force);
+
+  // Setup Commitizen
+  await setupCommitizen(pkgJson, config.force);
+
+  // Setup Husky (AFTER scripts are copied, so prepare-commit-msg can reference them)
+  await setupHusky(config.useLintStaged, config.packageManager, config.force);
 
   // Display success message
   displaySuccessMessage(config);
