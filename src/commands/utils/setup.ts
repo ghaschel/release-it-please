@@ -17,6 +17,8 @@ function getPackageManagerExec(packageManager: PackageManager): string {
       return "yarn dlx --";
     case "pnpm":
       return "pnpm dlx --";
+    case "bun":
+      return "bunx --";
   }
 }
 

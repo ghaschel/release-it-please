@@ -45,7 +45,7 @@ export async function gatherInitConfig(
       type: "list",
       name: "packageManager",
       message: "Which package manager do you use?",
-      choices: ["pnpm", "npm", "yarn"],
+      choices: ["pnpm", "npm", "yarn", "bun"],
     });
   }
 
@@ -192,7 +192,7 @@ export async function gatherInstallConfig(
       type: "list",
       name: "packageManager",
       message: "Which package manager do you use?",
-      choices: ["pnpm", "npm", "yarn"],
+      choices: ["pnpm", "npm", "yarn", "bun"],
     });
   }
 

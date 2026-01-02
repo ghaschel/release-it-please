@@ -44,6 +44,9 @@ export async function pathExists(filePath: string): Promise<boolean> {
  * Detect the package manager based on lock files
  */
 export async function detectPackageManager(): Promise<PackageManager> {
+  if (await pathExists("bun.lockb")) {
+    return "bun";
+  }
   if (await pathExists("pnpm-lock.yaml")) {
     return "pnpm";
   }

@@ -2,7 +2,7 @@ import chalk from "chalk";
 
 import type { PackageManager, PrettierMethod } from "../../types";
 
-const VALID_PACKAGE_MANAGERS: PackageManager[] = ["npm", "yarn", "pnpm"];
+const VALID_PACKAGE_MANAGERS: PackageManager[] = ["npm", "yarn", "pnpm", "bun"];
 const VALID_PRETTIER_METHODS: PrettierMethod[] = ["eslint", "pretty-quick"];
 
 export function validatePackageManager(

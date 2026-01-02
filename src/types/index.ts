@@ -1,4 +1,4 @@
-export type PackageManager = "npm" | "yarn" | "pnpm";
+export type PackageManager = "npm" | "yarn" | "pnpm" | "bun";
 export type PrettierMethod = "eslint" | "pretty-quick";
 
 export interface InitOptions {
