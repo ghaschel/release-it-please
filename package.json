@@ -15,7 +15,7 @@
     "copy:templates": "cp -r templates dist/",
     "start": "node dist/bin/cli.js",
     "prepublishOnly": "pnpm build",
-    "release": "commit-and-tag-version",
+    "release": "git fetch --tags && commit-and-tag-version",
     "push": "git push --follow-tags",
     "prepare": "husky"
   },

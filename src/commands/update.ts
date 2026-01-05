@@ -4,29 +4,13 @@ import fs from "fs-extra";
 import ora from "ora";
 import path from "path";
 
-import type { PackageManager } from "../types";
 import {
   detectPackageManager,
   detectPrettierMethod,
   findExistingEslintConfig,
   getTemplateEslintConfigName,
 } from "./utils/checker";
-
-/**
- * Get the package manager execution command
- */
-function getPackageManagerExec(packageManager: PackageManager): string {
-  switch (packageManager) {
-    case "npm":
-      return "npx --no --";
-    case "yarn":
-      return "yarn dlx --";
-    case "pnpm":
-      return "pnpm dlx --";
-    case "bun":
-      return "bunx --";
-  }
-}
+import { getPackageManagerExec } from "./utils/package-manager-exec";
 
 export const updateCommand = new Command("update")
   .description("Update template files (scripts, configs) to the latest version")

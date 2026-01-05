@@ -125,7 +125,7 @@ async function runInit(options: InitOptions): Promise<void> {
   }
 
   // Update package.json scripts
-  await updatePackageJsonScripts(config.force);
+  await updatePackageJsonScripts(config.force, config.packageManager);
 
   // Setup Commitizen
   await setupCommitizen(pkgJson, config.force);

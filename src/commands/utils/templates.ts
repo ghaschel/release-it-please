@@ -3,12 +3,13 @@ import fs from "fs-extra";
 import ora from "ora";
 import path from "path";
 
-import type { PrettierMethod } from "../../types";
+import type { PackageManager, PrettierMethod } from "../../types";
 import {
   areTemplateFilesInstalled,
   findExistingEslintConfig,
   getTemplateEslintConfigName,
 } from "./checker";
+import { getPackageManagerExec } from "./package-manager-exec";
 
 export async function copyTemplateFiles(
   useSplitChangelog: boolean,
@@ -163,9 +164,15 @@ async function removeSplitChangelogScript(): Promise<void> {
   }
 }
 
-export async function updatePackageJsonScripts(force: boolean): Promise<void> {
+export async function updatePackageJsonScripts(
+  force: boolean,
+  packageManager: PackageManager
+): Promise<void> {
+  const pmExec = getPackageManagerExec(packageManager);
+
   const requiredScripts = {
-    release: "commit-and-tag-version",
+    "release:initial": `git fetch --tags && $ ${pmExec} commit-and-tag-version --release-as v1.0.0`,
+    release: "git fetch --tags && commit-and-tag-version",
     push: "git push --follow-tags",
   };
 
