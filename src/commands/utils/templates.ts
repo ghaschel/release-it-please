@@ -171,8 +171,8 @@ export async function updatePackageJsonScripts(
   const pmExec = getPackageManagerExec(packageManager);
 
   const requiredScripts = {
-    "release:initial": `git fetch --tags && $ ${pmExec} commit-and-tag-version --release-as v1.0.0`,
-    release: "git fetch --tags && commit-and-tag-version",
+    "release:initial": `git fetch --tags --force && $ ${pmExec} commit-and-tag-version --release-as v1.0.0`,
+    release: "git fetch --tags --force && commit-and-tag-version",
     push: "git push --follow-tags",
   };
 
